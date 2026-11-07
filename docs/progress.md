@@ -5,7 +5,7 @@
 
 ## 最后更新
 
-2026-11-07 · IOS-18 第一阶段：semantic/episodic 分层记忆、confirmed/pending 生命周期、本地混合召回与工作记忆预算；语音仍为 M2 未实现
+2026-11-07 · 本地 Git `main` 仓库初始化；IOS-18 第一阶段：semantic/episodic 分层记忆、confirmed/pending 生命周期、本地混合召回与工作记忆预算；语音仍为 M2 未实现
 
 ## 当前状态一句话
 

@@ -6,6 +6,8 @@ Edge Assistant 是一个端侧优先的移动 AI 助手设计项目，目标是�
 
 **M1：推理抽象与模型资产进行中**
 
+本地源码托管在 Git `main` 分支；构建产物、SwiftPM 缓存、Xcode 用户数据和 `.DS_Store` 已加入 `.gitignore`。
+
 当前包含：
 
 - 完整产品设计文档。

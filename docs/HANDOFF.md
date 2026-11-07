@@ -2,6 +2,7 @@
 
 ## 当前交付
 
+- 本地 Git 仓库：`main` 分支承载当前源码与文档基线；构建缓存、SwiftPM 依赖缓存、Xcode 用户数据和系统杂项文件不入库。
 - `docs/design.md`：完整产品设计、架构、数据模型、边界和验收清单。
 - `docs/adr/0001-on-device-first-architecture.md`：端侧优先架构决策。
 - `docs/adr/0002-model-tiering-and-asset-delivery.md`：模型分级与资产分发决策。
