@@ -1,0 +1,13 @@
+{
+  "name": "edge-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Design and architecture prototype for an on-device mobile AI assistant.",
+  "scripts": {
+    "test": "node --test test/engine.test.js test/model-registry.test.js test/inference-engine.test.js test/asset-installer.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
+

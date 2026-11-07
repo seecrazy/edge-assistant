@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edge Assistant · 端侧 AI 助手原型</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">On-device first</p>
+          <h1>Edge Assistant</h1>
+          <p class="subtitle">端侧 AI 助手 · 架构与交互原型</p>
+        </div>
+        <div class="privacy-pill" id="privacy-pill">本地运行 · 无网络请求</div>
+      </header>
+
+      <main class="app-main">
+        <aside class="panel device-panel">
+          <h2>设备与模型档位</h2>
+          <label>
+            内存
+            <select id="ram-select">
+              <option value="6">6GB</option>
+              <option value="8">8GB</option>
+              <option value="12" selected>12GB</option>
+              <option value="16">16GB</option>
+            </select>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="npu-checkbox" checked />
+            有 NPU
+          </label>
+
+          <section class="model-card">
+            <div class="model-card-head">
+              <strong id="tier-label">Flagship</strong>
+              <span id="asset-size">2.0–2.5GB</span>
+            </div>
+            <p id="model-name">3–4B dense / MoE, 4-bit</p>
+            <p id="tier-description">完整语音通话与视频理解</p>
+          </section>
+
+          <section class="runtime-panel">
+            <h3>M1 推理运行时</h3>
+            <section class="onboarding" id="install-onboarding">
+              <div class="onboarding-head">
+                <strong>内置端侧模型</strong>
+                <span class="status-chip">安装即内置</span>
+              </div>
+              <p id="onboarding-copy">模型随 App 一并安装到手机，首次启动自动校验装载，聊天直接调用内置模型。</p>
+              <button type="button" id="retry-install" hidden>重新校验并装载</button>
+              <p class="runtime-log" id="onboarding-log">正在自动校验自带模型…</p>
+            </section>
+            <div class="runtime-status" id="runtime-status">
+              <span class="status-chip">unloaded</span>
+              <span id="runtime-model">尚未装载模型</span>
+            </div>
+            <dl class="runtime-metadata">
+              <div>
+                <dt>资产版本</dt>
+                <dd id="runtime-version">—</dd>
+              </div>
+              <div>
+                <dt>SHA-256</dt>
+                <dd id="runtime-hash">—</dd>
+              </div>
+            </dl>
+            <div class="runtime-actions">
+              <button type="button" id="install-model">校验并装载</button>
+              <button type="button" id="corrupt-model">模拟损坏资产</button>
+              <button type="button" id="rollback-model">回滚</button>
+            </div>
+            <p class="runtime-log" id="runtime-log">等待模型装载。</p>
+          </section>
+
+          <nav class="mode-tabs" aria-label="功能模式">
+            <button type="button" class="mode-tab active" data-mode="chat">文字</button>
+            <button type="button" class="mode-tab" data-mode="voice">语音通话</button>
+            <button type="button" class="mode-tab" data-mode="video">视频理解</button>
+          </nav>
+
+          <section>
+            <h3>延迟预算</h3>
+            <div id="pipeline-container" class="pipeline-container"></div>
+            <p class="budget-result" id="budget-result"></p>
+          </section>
+        </aside>
+
+        <section class="panel mode-panel">
+          <div id="chat-mode" class="mode-view active">
+            <div class="mode-header">
+              <h2>文字对话</h2>
+              <span class="status-chip">流式生成</span>
+            </div>
+            <div class="messages" id="messages" aria-live="polite"></div>
+            <form class="composer" id="chat-form">
+              <input id="chat-input" type="text" placeholder="输入问题，例如：帮我设一个提醒" autocomplete="off" />
+              <button type="submit">发送</button>
+            </form>
+          </div>
+
+          <div id="voice-mode" class="mode-view">
+            <div class="mode-header">
+              <h2>App 内语音通话</h2>
+              <span class="status-chip" id="voice-state">idle</span>
+            </div>
+            <div class="voice-stage">
+              <div class="voice-orb" id="voice-orb" data-state="idle"></div>
+              <p id="voice-caption">点击开始通话，模拟全双工状态机。</p>
+            </div>
+            <div class="voice-controls">
+              <button type="button" id="start-call">开始通话</button>
+              <button type="button" id="simulate-user">模拟用户说完</button>
+              <button type="button" id="interrupt-call">打断</button>
+              <button type="button" id="end-call">结束</button>
+            </div>
+            <div class="voice-input">
+              <label>
+                模拟 ASR 文本
+                <input id="voice-input" type="text" value="帮我设一个明天的提醒" />
+              </label>
+            </div>
+            <div class="messages compact" id="voice-messages" aria-live="polite"></div>
+          </div>
+
+          <div id="video-mode" class="mode-view">
+            <div class="mode-header">
+              <h2>摄像头 / 屏幕理解</h2>
+              <span class="status-chip">关键帧 + 语义压缩</span>
+            </div>
+            <div class="video-layout">
+              <div class="simulated-camera" id="simulated-camera">
+                <span class="camera-label">模拟关键帧</span>
+                <div class="scene-object doc">文档</div>
+                <div class="scene-object cup">咖啡杯</div>
+                <div class="scene-object phone">手机</div>
+              </div>
+              <div class="vision-result">
+                <button type="button" id="capture-frame">抽取关键帧并生成摘要</button>
+                <div id="vision-summary" class="vision-summary">
+                  尚未生成视觉摘要。该原型不访问真实摄像头。
+                </div>
+              </div>
+            </div>
+            <form class="composer" id="video-form">
+              <input id="video-input" type="text" placeholder="问我看到了什么" value="你看到了什么？" />
+              <button type="submit">提问</button>
+            </form>
+            <div class="messages compact" id="video-messages" aria-live="polite"></div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <p>
+          当前为 M0 架构原型：不包含真实模型推理、真实电话网络或摄像头采集。设计文档见
+          <code>docs/design.md</code>。
+        </p>
+      </footer>
+    </div>
+
+    <script src="js/engine.js"></script>
+    <script src="js/model-registry.js"></script>
+    <script src="js/inference-engine.js"></script>
+    <script src="js/asset-installer.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
+

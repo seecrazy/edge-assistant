@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.build/
+.memory-build/
+.swiftpm/
+xcuserdata/
+DerivedData/
+.DS_Store
+*.log
+*.tmp
+
